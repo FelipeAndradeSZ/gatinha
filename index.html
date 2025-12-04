@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Semáforo do Humor ❤️</title>
+    <style>
+        body { font-family: 'Arial', sans-serif; background-color: #f4f4f9; text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; margin: 0; }
+        h1 { color: #333; margin-bottom: 30px; }
+        .container { display: flex; flex-direction: column; gap: 20px; width: 90%; max-width: 400px; }
+        button { border: none; padding: 20px; font-size: 1.2rem; border-radius: 15px; cursor: pointer; color: white; font-weight: bold; transition: transform 0.2s, opacity 0.2s; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        button:active { transform: scale(0.95); }
+        .btn-green { background-color: #2ecc71; }
+        .btn-yellow { background-color: #f1c40f; color: #333; }
+        .btn-red { background-color: #e74c3c; }
+        .status { margin-top: 20px; font-size: 0.9rem; color: #666; }
+    </style>
+</head>
+<body>
+
+    <h1>Como você está? ❤️</h1>
+
+    <div class="container">
+        <button class="btn-green" onclick="enviarHumor('verde')">😊 FELIZ / BEM</button>
+        <button class="btn-yellow" onclick="enviarHumor('amarelo')">⚠️ OCUPADA</button>
+        <button class="btn-red" onclick="enviarHumor('vermelho')">😢 TRISTE / NÃO TÔ BEM</button>
+    </div>
+
+    <div class="status" id="statusMsg">Aguardando comando...</div>
+
+    <script>
+        // SEUS DADOS (Já coloquei os que você mandou)
+        const AIO_USERNAME = "felpszz";
+        const AIO_KEY = "aio_wvMp25rOHKc3K7lNPM7uocxAUKj7"; 
+        const FEED_NAME = "humor"; 
+
+        function enviarHumor(cor) {
+            const statusMsg = document.getElementById('statusMsg');
+            statusMsg.innerText = "Enviando...";
+            
+            // --- A MUDANÇA ESTÁ AQUI EMBAIXO ---
+            // A chave agora vai na URL (?x-aio-key=...) e não no header
+            const url = `https://io.adafruit.com/api/v2/${AIO_USERNAME}/feeds/${FEED_NAME}/data?x-aio-key=${AIO_KEY}`;
+
+            const dados = {
+                value: cor
+            };
+
+            fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                    // Removi o 'X-AIO-Key' daqui de dentro para não bloquear
+                },
+                body: JSON.stringify(dados)
+            })
+            .then(response => {
+                if(response.ok) {
+                    statusMsg.innerText = "Enviado: " + cor.toUpperCase();
+                } else {
+                    statusMsg.innerText = "Erro. Verifique se o Feed 'humor' existe.";
+                    console.log("Status:", response.status);
+                }
+            })
+            .catch(error => {
+                statusMsg.innerText = "Erro de conexão.";
+                console.error('Erro:', error);
+            });
+        }
+    </script>
+</body>
+</html>
